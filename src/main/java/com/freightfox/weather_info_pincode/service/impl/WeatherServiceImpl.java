@@ -45,8 +45,13 @@ public class WeatherServiceImpl implements WeatherService {
 
             WeatherInfoEntity entity = existingWeather.get();
 
+            PincodeLocationEntity location = locationRepository
+                    .findById(entity.getPincode())
+                    .orElse(null);
+
             return WeatherResponse.builder()
                     .pincode(entity.getPincode())
+                    .city(location != null ? location.getCity() : "UNKNOWN")
                     .temperature(entity.getTemperature())
                     .humidity(entity.getHumidity())
                     .weatherDescription(entity.getWeatherDescription())
@@ -73,6 +78,7 @@ public class WeatherServiceImpl implements WeatherService {
                                             .pincode(request.getPincode())
                                             .latitude(geo.getLat())
                                             .longitude(geo.getLon())
+                                            .city(geo.getName())
                                             .build();
 
                             return locationRepository.save(newLocation);
@@ -106,10 +112,12 @@ public class WeatherServiceImpl implements WeatherService {
         // 5️ Return response
         return WeatherResponse.builder()
                 .pincode(request.getPincode())
+                .city(location.getCity())
                 .temperature(newWeather.getTemperature())
                 .humidity(newWeather.getHumidity())
                 .weatherDescription(newWeather.getWeatherDescription())
                 .source("API")
                 .build();
     }
+
 }

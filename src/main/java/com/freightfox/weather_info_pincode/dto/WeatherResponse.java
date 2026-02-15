@@ -8,9 +8,9 @@ import lombok.Getter;
 public class WeatherResponse {
 
     private String pincode;
-    private String city;
+    private String city;   
     private Double temperature;
     private Integer humidity;
     private String weatherDescription;
-    private String source; // CACHE or API
+    private String source;
 }

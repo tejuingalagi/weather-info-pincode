@@ -28,4 +28,5 @@ public class WeatherInfoEntity {
     private Double temperature;
     private Integer humidity;
     private String weatherDescription;
+    
 }

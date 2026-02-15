@@ -22,4 +22,8 @@ public class PincodeLocationEntity {
 
     @Column(nullable = false)
     private Double longitude;
+
+    @Column(nullable = false)
+    private String city;
 }
+

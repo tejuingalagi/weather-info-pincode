@@ -11,4 +11,6 @@ public class GeoApiResponse {
 
     private Double lat;
     private Double lon;
+    private String name;
+
 }
