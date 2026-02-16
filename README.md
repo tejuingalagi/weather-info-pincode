@@ -4,31 +4,18 @@
 
 This project provides a single REST API to fetch weather information for a **specific pincode and particular date**.
 
-The system integrates with the OpenWeather API and stores results in a PostgreSQL database.
-To avoid repeated external API calls, the application implements a **two-level caching strategy** based on `(pincode + date)`.
+The application integrates with the OpenWeather APIs and stores results in a PostgreSQL database.
+To reduce repeated external API calls, responses are cached using a **(pincode + date)** combination.
 
-The API is testable using Postman or Swagger and does not include any UI as per requirements.
-
----
-
-## Key Objective
-
-Design a backend service that:
-
-* Retrieves weather data for a given pincode
-* Stores location and weather data in DB
-* Reuses stored data to optimize API calls
-* Minimizes external API usage
+No UI is included. The API can be tested using Postman.
 
 ---
 
-## Functional Coverage
-
-### 1. Single REST API
+## API Endpoint
 
 **POST /api/weather**
 
-Request:
+### Request
 
 ```json
 {
@@ -37,9 +24,10 @@ Request:
 }
 ```
 
-`forDate` is optional → defaults to current date.
+`forDate` is optional
+If not provided → current date is used
 
-Response:
+### Response
 
 ```json
 {
@@ -52,7 +40,7 @@ Response:
 }
 ```
 
-`source` values:
+**source values**
 
 * API → fetched from OpenWeather
 * CACHE → returned from database
@@ -63,6 +51,8 @@ Response:
 
 ### Table: pincode_location
 
+Stores mapping of pincode to coordinates.
+
 | Column    | Description |
 | --------- | ----------- |
 | pincode   | Primary Key |
@@ -71,6 +61,8 @@ Response:
 | city      | City name   |
 
 ### Table: weather_info
+
+Stores weather for a pincode and date.
 
 | Column              | Description  |
 | ------------------- | ------------ |
@@ -81,62 +73,52 @@ Response:
 | humidity            | Humidity     |
 | weather_description | Description  |
 
-**Unique Constraint:** `(pincode, for_date)`
+**Unique constraint:** `(pincode, for_date)`
 
 ---
 
-## API Optimization Strategy (Most Important)
+## API Optimization Logic
 
-The application avoids unnecessary external API calls using **two levels of caching**.
+The system minimizes external API usage using two-step caching.
 
-### Level 1 — Location Cache
+### Step 1 — Location Cache
 
-* Convert Pincode → Latitude/Longitude using Geocoding API
-* Store in database
+* Convert pincode → latitude/longitude using Geocoding API
+* Save in database
 * Future requests reuse stored coordinates
 
-### Level 2 — Weather Cache
+### Step 2 — Weather Cache
 
-* Weather stored using `(pincode + date)`
+* Weather stored using (pincode + date)
 * If same request repeats → return DB data
-* External weather API is NOT called again
-
-This significantly improves performance and reduces API usage.
+* Weather API is not called again
 
 ---
 
 ## Request Flow
 
-Client
-↓
-Controller
-↓
-Service
-↓
-Check Weather in DB
-→ Found → Return Response
+1. Client sends request to API
+2. Controller forwards request to Service layer
 
-→ Not Found
-  Check Location in DB
-  → Not Found → Call Geo API → Save Location
-  Call Weather API → Save Weather
-  Return Response
+3. Service checks weather data in database
+   - If found → return cached response
+
+4. If weather not found:
+   - Check location (pincode → lat/long) in DB
+       - If not found → call Geocoding API → save location
+
+5. Call Weather API using coordinates
+6. Save weather data in DB
+7. Return response to client
+
 
 ---
 
-## Validations & Error Handling
+## Validations
 
 * Missing date → defaults to current date
-* Invalid pincode → handled via global exception handler
-* External API failure → proper error response returned
-
----
-
-## Assumptions
-
-* OpenWeather free API provides current weather data
-* For past dates, latest available weather is stored
-* First successful response for `(pincode + date)` is cached
+* Invalid pincode → handled via exception handler
+* External API failure → error response returned
 
 ---
 
@@ -148,31 +130,30 @@ Check Weather in DB
 * PostgreSQL
 * Maven
 * Lombok
-* OpenWeather API
 
 ---
 
-## External APIs Used
+## External APIs
 
-Pincode → Lat/Long
+**Geocoding:**
 https://api.openweathermap.org/geo/1.0/zip
 
-Lat/Long → Weather
+**Weather:**
 https://api.openweathermap.org/data/2.5/weather
 
 ---
 
-## Environment Configuration
+## Configuration
 
 API key is not stored in source code.
 
-application.properties:
+`application.properties`
 
 ```
 weather.api.key=${WEATHER_API_KEY}
 ```
 
-Set environment variable (Git Bash):
+Set environment variable:
 
 ```
 export WEATHER_API_KEY=your_api_key
@@ -182,17 +163,17 @@ export WEATHER_API_KEY=your_api_key
 
 ## How to Run
 
-1. Create database:
+Create database:
 
 ```
 weather_db
 ```
 
-2. Configure DB credentials
+Configure DB credentials in `application.properties`
 
-3. Set API key
+Set API key environment variable
 
-4. Run:
+Run:
 
 ```
 mvn spring-boot:run
@@ -202,40 +183,24 @@ mvn spring-boot:run
 
 ## Testing
 
-Use Postman or Swagger:
+Test using Postman:
 
 ```
 POST http://localhost:8080/api/weather
 ```
 
-Repeated requests return cached results.
+Repeated requests for the same pincode & date will return cached results.
 
 ---
 
 ## Project Structure
 
-* controller → REST API layer
-* service → business logic
-* repository → database access
-* entity → database tables
-* dto → request/response models
-* exception → global error handling
-
----
-
-## Testability
-
-The API is designed to be testable independently using Postman/Swagger.
-Service layer logic is structured to support unit testing for caching behavior and validation.
-
----
-
-## Possible Enhancements
-
-* Add unit tests (TDD)
-* Add Swagger documentation
-* Add Redis caching
-* Support historical weather APIs
+* controller – REST endpoint
+* service – business logic
+* repository – database access
+* entity – tables
+* dto – request/response models
+* exception – error handling
 
 ---
 
