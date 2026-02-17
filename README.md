@@ -1,11 +1,11 @@
-# Weather Info by Pincode (Backend Assignment)
+# Weather Info by Pincode
 
 ## Overview
 
-This project provides a single REST API to fetch weather information for a **specific pincode and particular date**.
+This project provides a REST API to fetch weather information for a specific pincode and date.
 
-The application integrates with the OpenWeather APIs and stores results in a PostgreSQL database.
-To reduce repeated external API calls, responses are cached using a **(pincode + date)** combination.
+The system integrates with OpenWeather APIs and stores results in a PostgreSQL database.
+To minimize external API usage, responses are cached using a **(pincode + date)** combination.
 
 No UI is included. The API can be tested using Postman.
 
@@ -13,19 +13,20 @@ No UI is included. The API can be tested using Postman.
 
 ## API Endpoint
 
-**POST /api/weather**
+**GET /api/weather**
 
-### Request
+### Query Parameters
 
-```json
-{
-  "pincode": "560001",
-  "forDate": "2020-10-15"
-}
+| Parameter | Required | Description                                          |
+| --------- | -------- | ---------------------------------------------------- |
+| pincode   | Yes      | 6 digit Indian pincode                               |
+| forDate   | No       | Date in YYYY-MM-DD format (defaults to current date) |
+
+### Example Request
+
 ```
-
-`forDate` is optional
-If not provided → current date is used
+http://localhost:8080/api/weather?pincode=560001&forDate=2026-02-17
+```
 
 ### Response
 
@@ -51,7 +52,7 @@ If not provided → current date is used
 
 ### Table: pincode_location
 
-Stores mapping of pincode to coordinates.
+Stores mapping of pincode to coordinates
 
 | Column    | Description |
 | --------- | ----------- |
@@ -62,7 +63,7 @@ Stores mapping of pincode to coordinates.
 
 ### Table: weather_info
 
-Stores weather for a pincode and date.
+Stores weather for a pincode and date
 
 | Column              | Description  |
 | ------------------- | ------------ |
@@ -77,55 +78,29 @@ Stores weather for a pincode and date.
 
 ---
 
-## API Optimization Logic
+## Caching Logic
 
-The system minimizes external API usage using two-step caching.
-
-### Step 1 — Location Cache
-
-* Convert pincode → latitude/longitude using Geocoding API
-* Save in database
-* Future requests reuse stored coordinates
-
-### Step 2 — Weather Cache
-
-* Weather stored using (pincode + date)
-* If same request repeats → return DB data
-* Weather API is not called again
-
----
-
-## Request Flow
-
-1. Client sends request to API
-2. Controller forwards request to Service layer
-
-3. Service checks weather data in database
-   - If found → return cached response
-
-4. If weather not found:
-   - Check location (pincode → lat/long) in DB
-       - If not found → call Geocoding API → save location
-
-5. Call Weather API using coordinates
-6. Save weather data in DB
-7. Return response to client
-
+1. Convert pincode → latitude/longitude using Geocoding API
+2. Store coordinates in database
+3. Fetch weather using lat/long
+4. Store weather using (pincode + date)
+5. Repeated request returns cached data without external API call
 
 ---
 
 ## Validations
 
 * Missing date → defaults to current date
-* Invalid pincode → handled via exception handler
-* External API failure → error response returned
+* Invalid pincode → error response
+* Future date → not supported
+* External API failure → handled gracefully
 
 ---
 
 ## Tech Stack
 
 * Java 8
-* Spring Boot 2.7
+* Spring Boot
 * Spring Data JPA
 * PostgreSQL
 * Maven
@@ -135,17 +110,21 @@ The system minimizes external API usage using two-step caching.
 
 ## External APIs
 
-**Geocoding:**
+Geocoding:
 https://api.openweathermap.org/geo/1.0/zip
 
-**Weather:**
+Weather:
 https://api.openweathermap.org/data/2.5/weather
 
 ---
 
 ## Configuration
 
-API key is not stored in source code.
+Set environment variable:
+
+```
+WEATHER_API_KEY=your_api_key
+```
 
 `application.properties`
 
@@ -153,25 +132,15 @@ API key is not stored in source code.
 weather.api.key=${WEATHER_API_KEY}
 ```
 
-Set environment variable:
-
-```
-export WEATHER_API_KEY=your_api_key
-```
-
 ---
 
-## How to Run
+## Run Application
 
 Create database:
 
 ```
 weather_db
 ```
-
-Configure DB credentials in `application.properties`
-
-Set API key environment variable
 
 Run:
 
@@ -186,10 +155,10 @@ mvn spring-boot:run
 Test using Postman:
 
 ```
-POST http://localhost:8080/api/weather
+GET http://localhost:8080/api/weather?pincode=560001
 ```
 
-Repeated requests for the same pincode & date will return cached results.
+Repeated requests return cached results.
 
 ---
 
@@ -204,6 +173,6 @@ Repeated requests for the same pincode & date will return cached results.
 
 ---
 
-## Author
+**Author**
 
 Tejeshwini Ingalagi
