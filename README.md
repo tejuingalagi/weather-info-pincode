@@ -173,6 +173,6 @@ Repeated requests return cached results.
 
 ---
 
-**Author**
-
+## Author
 Tejeshwini Ingalagi
+
