@@ -1,4 +1,4 @@
-package com.freightfox.weather_info_pincode.entity;
+package com.weatherinfopincode.entity;
 
 import lombok.*;
 

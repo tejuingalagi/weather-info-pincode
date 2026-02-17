@@ -1,7 +1,8 @@
-package com.freightfox.weather_info_pincode.repository;
+package com.weatherinfopincode.repository;
 
-import com.freightfox.weather_info_pincode.entity.PincodeLocationEntity;
 import org.springframework.data.jpa.repository.JpaRepository;
+
+import com.weatherinfopincode.entity.PincodeLocationEntity;
 
 public interface PincodeLocationRepository
         extends JpaRepository<PincodeLocationEntity, String> {

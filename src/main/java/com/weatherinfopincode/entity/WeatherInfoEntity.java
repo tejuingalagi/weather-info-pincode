@@ -1,4 +1,4 @@
-package com.freightfox.weather_info_pincode.entity;
+package com.weatherinfopincode.entity;
 
 import lombok.*;
 
@@ -6,8 +6,11 @@ import javax.persistence.*;
 import java.time.LocalDate;
 
 @Entity
-@Table(name = "weather_info",
-       uniqueConstraints = @UniqueConstraint(columnNames = {"pincode", "for_date"}))
+@Table(
+    name = "weather_info",
+    uniqueConstraints = @UniqueConstraint(columnNames = {"pincode", "for_date"}),
+    indexes = @Index(name="idx_weather_pincode_date", columnList="pincode, for_date")
+)
 @Getter
 @Setter
 @NoArgsConstructor
@@ -28,5 +31,4 @@ public class WeatherInfoEntity {
     private Double temperature;
     private Integer humidity;
     private String weatherDescription;
-    
 }

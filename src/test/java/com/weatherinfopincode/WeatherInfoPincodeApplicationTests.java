@@ -1,10 +1,10 @@
-package com.freightfox.weather_info_pincode;
+package com.weatherinfopincode;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
 
 @SpringBootTest
-class FreightfoxWeatherInfoPincodeApplicationTests {
+class WeatherInfoPincodeApplicationTests {
 
 	@Test
 	void contextLoads() {

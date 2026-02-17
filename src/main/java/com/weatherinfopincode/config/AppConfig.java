@@ -1,4 +1,4 @@
-package com.freightfox.weather_info_pincode.config;
+package com.weatherinfopincode.config;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;

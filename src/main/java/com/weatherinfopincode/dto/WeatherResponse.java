@@ -1,4 +1,4 @@
-package com.freightfox.weather_info_pincode.dto;
+package com.weatherinfopincode.dto;
 
 import lombok.Builder;
 import lombok.Getter;

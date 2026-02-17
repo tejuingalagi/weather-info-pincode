@@ -1,4 +1,4 @@
-package com.freightfox.weather_info_pincode.dto;
+package com.weatherinfopincode.dto;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import lombok.Getter;

@@ -1,13 +1,13 @@
-package com.freightfox.weather_info_pincode;
+package com.weatherinfopincode;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
 @SpringBootApplication
-public class FreightfoxWeatherInfoPincodeApplication {
+public class WeatherInfoPincodeApplication {
 
 	public static void main(String[] args) {
-		SpringApplication.run(FreightfoxWeatherInfoPincodeApplication.class, args);
+		SpringApplication.run(WeatherInfoPincodeApplication.class, args);
 	}
 
 }

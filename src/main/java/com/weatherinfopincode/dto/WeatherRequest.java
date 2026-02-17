@@ -1,6 +1,8 @@
-package com.freightfox.weather_info_pincode.dto;
+package com.weatherinfopincode.dto;
 
+import lombok.AllArgsConstructor;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import javax.validation.constraints.NotBlank;
@@ -9,6 +11,8 @@ import java.time.LocalDate;
 
 @Getter
 @Setter
+@AllArgsConstructor
+@NoArgsConstructor
 public class WeatherRequest {
 
     @NotBlank(message = "Pincode is required")
@@ -17,3 +21,4 @@ public class WeatherRequest {
 
     private LocalDate forDate;
 }
+
